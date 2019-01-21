@@ -25,9 +25,9 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: PLEX_GID
-              value: "{{ .Values.securityContext.fsGroup }}"
+              value: "{{ .Valuse.uid }}"
             - name: PLEX_UID
-              value: "{{ .Values.securityContext.fsGroup }}"
+              value: "{{ .Valuse.gid }}"
             - name: TZ
               value: "{{ .Values.timeZone }}"
           volumeMounts:

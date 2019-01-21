@@ -2,6 +2,9 @@
 
 timeZone: Europe/Zurich
 
+uid: 10001
+gid: 10001
+
 persistence:
   enabled: true
   config:
