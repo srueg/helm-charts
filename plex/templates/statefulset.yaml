@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "plex.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "plex.name" . }}
+    helm.sh/chart: {{ include "plex.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "plex.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "plex.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: PLEX_GID
+              value: "{{ .Values.securityContext.fsGroup }}"
+            - name: PLEX_UID
+              value: "{{ .Values.securityContext.fsGroup }}"
+            - name: TZ
+              value: "{{ .Values.timeZone }}"
+          volumeMounts:
+            - mountPath: /config
+              name: config
+            - mountPath: /data
+              name: data
+            - mountPath: /transcode
+              name: transcode
+          ports:
+            - name: http
+              containerPort: 32400
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /identity
+              port: http
+            initialDelaySeconds: 100
+          readinessProbe:
+            httpGet:
+              path: /identity
+              port: http
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+      terminationGracePeriodSeconds: 60
+      {{- with .Values.securityContext }}
+      securityContext:
+{{ toYaml . | indent 8 }}
+      {{- end }}
+      volumes:
+        - name: transcode
+          emptyDir: {}
+{{- if .Values.persistence.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: config
+      spec:
+        accessModes:
+        {{- range .Values.persistence.config.accessModes }}
+          - {{ . | quote }}
+        {{- end }}
+        storageClassName: "{{ .Values.persistence.config.storageClass }}"
+        resources:
+          requests:
+            storage: {{ .Values.persistence.config.size | quote }}
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+        {{- range .Values.persistence.data.accessModes }}
+          - {{ . | quote }}
+        {{- end }}
+        storageClassName: "{{ .Values.persistence.data.storageClass }}"
+        resources:
+          requests:
+            storage: {{ .Values.persistence.data.size | quote }}
+{{- else }}
+        - name: config
+          emptyDir: {}
+        - name: data
+          emptyDir: {}
+{{- end }}
