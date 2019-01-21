@@ -2,10 +2,6 @@
 
 timeZone: Europe/Zurich
 
-securityContext:
-  runAsUser: 10001
-  fsGroup: 10001
-
 persistence:
   enabled: true
   config:

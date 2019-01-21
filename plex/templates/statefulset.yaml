@@ -65,10 +65,6 @@ spec:
 {{ toYaml . | indent 8 }}
     {{- end }}
       terminationGracePeriodSeconds: 60
-      {{- with .Values.securityContext }}
-      securityContext:
-{{ toYaml . | indent 8 }}
-      {{- end }}
       volumes:
         - name: transcode
           emptyDir: {}
