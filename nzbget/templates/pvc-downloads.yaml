@@ -1,0 +1,22 @@
+{{- if .Values.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "nzbget.fullname" . }}-downloads
+  labels:
+    app.kubernetes.io/name: {{ include "nzbget.name" . }}
+    helm.sh/chart: {{ include "nzbget.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  storageClassName: "{{ .Values.persistence.downloads.storageClass }}"
+  resources:
+    requests:
+      storage: {{ .Values.persistence.downloads.size | quote }}
+  accessModes:
+  {{- range .Values.persistence.downloads.accessModes }}
+    - {{ . | quote }}
+  {{- end }}
+  selector:
+{{ .Values.persistence.downloads.selector | toYaml | indent 4 }}
+{{- end }}

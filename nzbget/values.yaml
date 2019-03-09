@@ -1,4 +1,4 @@
-# Default values for plex
+# Default values for nzbget
 
 timeZone: Europe/Zurich
 
@@ -12,9 +12,9 @@ persistence:
     storageClass: ""
     accessModes: ["ReadWriteOnce"]
     selector:
-    # matchLabels:
-    #   some: label
-  data:
+    #  matchLabels:
+    #    some: label
+  downloads:
     size: 100Gi
     storageClass: ""
     accessModes: ["ReadWriteOnce"]
@@ -23,8 +23,8 @@ persistence:
     #   some: label
 
 image:
-  repository: docker.io/plexinc/pms-docker
-  tag: 1.14.1.5488-cc260c476
+  repository: docker.io/linuxserver/nzbget
+  tag: latest
   pullPolicy: Always
 
 nameOverride: ""
