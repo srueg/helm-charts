@@ -30,6 +30,10 @@ spec:
               value: "{{ .Values.gid }}"
             - name: TZ
               value: "{{ .Values.timeZone }}"
+            - name: ALLOWED_NETWORKS
+              value: "10.1.0.0/16,192.168.0.0/16"
+            - name: ADVERTISE_IP
+              value: plex.127.0.0.1.nip.io
           volumeMounts:
             - mountPath: /config
               name: config
@@ -69,32 +73,15 @@ spec:
         - name: transcode
           emptyDir: {}
 {{- if .Values.persistence.enabled }}
-  volumeClaimTemplates:
-    - metadata:
-        name: config
-      spec:
-        accessModes:
-        {{- range .Values.persistence.config.accessModes }}
-          - {{ . | quote }}
-        {{- end }}
-        storageClassName: "{{ .Values.persistence.config.storageClass }}"
-        resources:
-          requests:
-            storage: {{ .Values.persistence.config.size | quote }}
-    - metadata:
-        name: data
-      spec:
-        accessModes:
-        {{- range .Values.persistence.data.accessModes }}
-          - {{ . | quote }}
-        {{- end }}
-        storageClassName: "{{ .Values.persistence.data.storageClass }}"
-        resources:
-          requests:
-            storage: {{ .Values.persistence.data.size | quote }}
-{{- else }}
-        - name: config
-          emptyDir: {}
         - name: data
+          persistentVolumeClaim:
+            claimName: {{ include "plex.fullname" . }}-data
+        - name: config
+          persistentVolumeClaim:
+            claimName: {{ include "plex.fullname" . }}-config
+{{- else }}
+        - name: data
+          emptyDir: {}
+        - name: config
           emptyDir: {}
 {{- end }}

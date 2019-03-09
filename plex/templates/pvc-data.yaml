@@ -1,0 +1,22 @@
+{{- if .Values.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "plex.fullname" . }}-data
+  labels:
+    app.kubernetes.io/name: {{ include "plex.name" . }}
+    helm.sh/chart: {{ include "plex.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  storageClassName: "{{ .Values.persistence.data.storageClass }}"
+  resources:
+    requests:
+      storage: {{ .Values.persistence.data.size | quote }}
+  accessModes:
+  {{- range .Values.persistence.data.accessModes }}
+    - {{ . | quote }}
+  {{- end }}
+  selector:
+{{ .Values.persistence.data.selector | toYaml | indent 4 }}
+{{- end }}

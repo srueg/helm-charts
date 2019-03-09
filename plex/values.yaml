@@ -11,10 +11,16 @@ persistence:
     size: 10Gi
     storageClass: ""
     accessModes: ["ReadWriteOnce"]
+    selector:
+      matchLabels:
+        some: label
   data:
     size: 100Gi
     storageClass: ""
     accessModes: ["ReadWriteOnce"]
+    selector:
+    # matchLabels:
+    #   some: label
 
 image:
   repository: docker.io/plexinc/pms-docker
