@@ -4,6 +4,7 @@ timeZone: Europe/Zurich
 
 uid: "10001"
 gid: "10001"
+enableHealthChecks: true
 
 persistence:
   enabled: true
