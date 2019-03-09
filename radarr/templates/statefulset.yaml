@@ -37,7 +37,7 @@ spec:
               name: downloads
             - mountPath: /movies
               name: plex
-              subPath: Movies
+              subPath: {{ .Values.persistence.plex.subPath }}
           ports:
             - name: http
               containerPort: 7878

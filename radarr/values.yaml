@@ -18,6 +18,7 @@ persistence:
     volumeClaimName: nzbget-downloads
   plex:
     volumeClaimName: plex-data
+    subPath: Movies
 
 image:
   repository: docker.io/linuxserver/radarr
