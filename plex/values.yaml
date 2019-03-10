@@ -25,7 +25,7 @@ persistence:
 image:
   repository: docker.io/plexinc/pms-docker
   tag: 1.14.1.5488-cc260c476
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
 
 nameOverride: ""
 fullnameOverride: ""

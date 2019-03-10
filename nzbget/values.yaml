@@ -25,8 +25,8 @@ persistence:
 
 image:
   repository: docker.io/linuxserver/nzbget
-  tag: latest
-  pullPolicy: Always
+  tag: v20.0-ls5
+  pullPolicy: IfNotPresent
 
 nameOverride: ""
 fullnameOverride: ""
