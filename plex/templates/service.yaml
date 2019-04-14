@@ -11,6 +11,7 @@ spec:
   type: NodePort
   ports:
     - port: 80
+      nodePort: 32400
       targetPort: http
       name: http
   selector:
