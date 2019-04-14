@@ -30,10 +30,15 @@ spec:
               value: "{{ .Values.gid }}"
             - name: TZ
               value: "{{ .Values.timeZone }}"
-            - name: ALLOWED_NETWORKS
-              value: "10.1.0.0/16,192.168.0.0/16"
             - name: ADVERTISE_IP
-              value: plex.127.0.0.1.nip.io
+              value: "{{ .Values.ingress.host }}"
+            {{- if .Values.plexClaimSecretName }}
+            - name: PLEX_CLAIM
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.plexClaimSecretName }}
+                  key: plex-claim
+            {{- end }}
           volumeMounts:
             - mountPath: /config
               name: config

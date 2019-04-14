@@ -5,6 +5,8 @@ timeZone: Europe/Zurich
 uid: "10001"
 gid: "10001"
 
+plexClaimSecretName: # my-secret-name
+
 persistence:
   enabled: true
   config:
@@ -35,6 +37,7 @@ ingress:
   annotations:
     # kubernetes.io/ingress.class: nginx
     kubernetes.io/tls-acme: "true"
+    certmanager.k8s.io/acme-http01-edit-in-place: "true"
   host: # chart-example.local
   tls: true
 
