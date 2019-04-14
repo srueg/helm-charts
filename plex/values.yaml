@@ -18,6 +18,7 @@ persistence:
     #   some: label
   data:
     size: 100Gi
+    subPath: ""
     storageClass: ""
     accessModes: ["ReadWriteOnce"]
     selector:

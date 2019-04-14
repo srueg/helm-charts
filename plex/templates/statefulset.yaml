@@ -31,7 +31,7 @@ spec:
             - name: TZ
               value: "{{ .Values.timeZone }}"
             - name: ADVERTISE_IP
-              value: "{{ .Values.ingress.host }}"
+              value: "https://{{ .Values.ingress.host }}"
             {{- if .Values.plexClaimSecretName }}
             - name: PLEX_CLAIM
               valueFrom:
@@ -44,6 +44,7 @@ spec:
               name: config
             - mountPath: /data
               name: data
+              subPath: {{ .Values.persistence.data.subPath }}
             - mountPath: /transcode
               name: transcode
           ports:
