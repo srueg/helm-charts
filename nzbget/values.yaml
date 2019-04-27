@@ -40,13 +40,9 @@ ingress:
   annotations:
     # kubernetes.io/ingress.class: nginx
     kubernetes.io/tls-acme: "true"
-  path: /
-  hosts: []
-    # - chart-example.local
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+    certmanager.k8s.io/acme-http01-edit-in-place: "true"
+  host: # chart-example.local
+  tls: true
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
