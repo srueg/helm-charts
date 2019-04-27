@@ -8,7 +8,7 @@ gid: "10001"
 persistence:
   enabled: true
   config:
-    size: 10Gi
+    size: 1Gi
     storageClass: ""
     accessModes: ["ReadWriteOnce"]
     selector:

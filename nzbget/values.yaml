@@ -9,14 +9,14 @@ enableHealthChecks: true
 persistence:
   enabled: true
   config:
-    size: 10Gi
+    size: 1Gi
     storageClass: ""
     accessModes: ["ReadWriteOnce"]
     selector:
     #  matchLabels:
     #    some: label
   downloads:
-    size: 100Gi
+    size: 50Gi
     storageClass: ""
     accessModes: ["ReadWriteOnce"]
     selector:
