@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "tautulli.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "tautulli.name" . }}
+    helm.sh/chart: {{ include "tautulli.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "tautulli.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "tautulli.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: PGID
+              value: "{{ .Values.uid }}"
+            - name: PUID
+              value: "{{ .Values.gid }}"
+            - name: TZ
+              value: "{{ .Values.timeZone }}"
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: plex-logs
+              mountPath: /logs
+              subPath: {{ .Values.persistence.plex.subPath }}
+          ports:
+            - name: http
+              containerPort: 8181
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 60
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+      terminationGracePeriodSeconds: 60
+      volumes:
+{{- if .Values.persistence.enabled }}
+        - name: config
+          persistentVolumeClaim:
+            claimName: {{ include "tautulli.fullname" . }}-config
+        - name: plex-logs
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.plex.volumeClaimName }}
+{{- else }}
+        - name: config
+          emptyDir: {}
+        - name: plex-logs
+          emptyDir: {}
+{{- end }}

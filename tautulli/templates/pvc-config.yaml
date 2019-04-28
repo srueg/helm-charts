@@ -1,0 +1,22 @@
+{{- if .Values.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "tautulli.fullname" . }}-config
+  labels:
+    app.kubernetes.io/name: {{ include "tautulli.name" . }}
+    helm.sh/chart: {{ include "tautulli.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  storageClassName: "{{ .Values.persistence.config.storageClass }}"
+  resources:
+    requests:
+      storage: {{ .Values.persistence.config.size | quote }}
+  accessModes:
+  {{- range .Values.persistence.config.accessModes }}
+    - {{ . | quote }}
+  {{- end }}
+  selector:
+{{ .Values.persistence.config.selector | toYaml | indent 4 }}
+{{- end }}

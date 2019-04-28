@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "tautulli.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "tautulli.name" . }}
+    helm.sh/chart: {{ include "tautulli.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+  selector:
+    app.kubernetes.io/name: {{ include "tautulli.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
