@@ -1,6 +1,6 @@
 apiVersion: v1
-appVersion: 1.13.9.5456
+appVersion: 1.15.4.993
 description: A Plex chart for Kubernetes
 name: plex
-version: 0.1.0
+version: 0.2.0
 icon: https://midatlanticconsulting.com/blog/wp-content/uploads/2015/12/plex-mac-icon-100634511-large.png

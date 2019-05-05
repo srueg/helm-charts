@@ -17,7 +17,7 @@ persistence:
 
 image:
   repository: docker.io/linuxserver/ombi
-  tag: 3.0.4489-ls39
+  tag: 3.0.4538-ls44
   pullPolicy: IfNotPresent
 
 nameOverride: ""
