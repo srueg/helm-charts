@@ -39,11 +39,6 @@ spec:
           ports:
             - name: http
               containerPort: 8181
-          livenessProbe:
-            httpGet:
-              path: /welcome
-              port: http
-            initialDelaySeconds: 60
           readinessProbe:
             httpGet:
               path: /welcome
