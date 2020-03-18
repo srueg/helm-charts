@@ -35,9 +35,9 @@ spec:
               name: config
             - mountPath: /downloads/
               name: downloads
-            - mountPath: /completed/
-              name: completed
               subPath: {{ .Values.persistence.plex.subPath }}
+            - mountPath: /intermediate/
+              name: intermediate
           ports:
             - name: http
               containerPort: 6789
@@ -69,10 +69,10 @@ spec:
       terminationGracePeriodSeconds: 60
       volumes:
 {{- if .Values.persistence.enabled }}
-        - name: downloads
+        - name: intermediate
           persistentVolumeClaim:
             claimName: {{ include "nzbget.fullname" . }}-downloads
-        - name: completed
+        - name: downloads
           persistentVolumeClaim:
             claimName: {{ .Values.persistence.plex.volumeClaimName }}
         - name: config
@@ -83,6 +83,6 @@ spec:
           emptyDir: {}
         - name: config
           emptyDir: {}
-        - name: completed
+        - name: intermediate
           emptyDir: {}
 {{- end }}
