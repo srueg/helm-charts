@@ -14,11 +14,9 @@ persistence:
     selector:
     # matchLabels:
     #   some: label
-  downloads:
-    volumeClaimName: nzbget-downloads
-  plex:
-    volumeClaimName: plex-data
-    subPath: Movies
+  volumeClaimNamePlex: plex-data
+  subPathDownloads: addons/nzbget/
+  subPathPlex: Movies/
 
 image:
   repository: docker.io/linuxserver/radarr

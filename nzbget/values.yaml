@@ -22,6 +22,9 @@ persistence:
     selector:
     # matchLabels:
     #   some: label
+  plex:
+    volumeClaimName: plex-data
+    subPath: addons/nzbget/
 
 image:
   repository: docker.io/linuxserver/nzbget

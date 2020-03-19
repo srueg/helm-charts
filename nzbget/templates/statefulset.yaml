@@ -31,11 +31,12 @@ spec:
             - name: TZ
               value: "{{ .Values.timeZone }}"
           volumeMounts:
-            - mountPath: /config
+            - mountPath: /config/
               name: config
-            - mountPath: /downloads
+            - mountPath: /downloads/
               name: downloads
-            - mountPath: /intermediate
+              subPath: {{ .Values.persistence.plex.subPath }}
+            - mountPath: /intermediate/
               name: intermediate
           ports:
             - name: http
@@ -67,12 +68,13 @@ spec:
     {{- end }}
       terminationGracePeriodSeconds: 60
       volumes:
-        - name: intermediate
-          emptyDir: {}
 {{- if .Values.persistence.enabled }}
-        - name: downloads
+        - name: intermediate
           persistentVolumeClaim:
             claimName: {{ include "nzbget.fullname" . }}-downloads
+        - name: downloads
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.plex.volumeClaimName }}
         - name: config
           persistentVolumeClaim:
             claimName: {{ include "nzbget.fullname" . }}-config
@@ -80,5 +82,7 @@ spec:
         - name: downloads
           emptyDir: {}
         - name: config
+          emptyDir: {}
+        - name: intermediate
           emptyDir: {}
 {{- end }}
