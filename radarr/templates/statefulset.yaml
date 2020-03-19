@@ -31,13 +31,14 @@ spec:
             - name: TZ
               value: "{{ .Values.timeZone }}"
           volumeMounts:
-            - mountPath: /config
+            - mountPath: /config/
               name: config
-            - mountPath: /downloads
-              name: downloads
-            - mountPath: /movies
+            - mountPath: /downloads/
               name: plex
-              subPath: {{ .Values.persistence.plex.subPath }}
+              subPath: {{ .Values.persistence.subPathDownloads }}
+            - mountPath: /movies/
+              name: plex
+              subPath: {{ .Values.persistence.subPathPlex }}
           ports:
             - name: http
               containerPort: 7878
@@ -69,17 +70,12 @@ spec:
 {{- if .Values.persistence.enabled }}
         - name: plex
           persistentVolumeClaim:
-            claimName: {{ .Values.persistence.plex.volumeClaimName }}
-        - name: downloads
-          persistentVolumeClaim:
-            claimName: {{ .Values.persistence.downloads.volumeClaimName }}
+            claimName: {{ .Values.persistence.volumeClaimNamePlex }}
         - name: config
           persistentVolumeClaim:
             claimName: {{ include "radarr.fullname" . }}-config
 {{- else }}
         - name: plex
-          emptyDir: {}
-        - name: downloads
           emptyDir: {}
         - name: config
           emptyDir: {}

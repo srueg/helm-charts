@@ -14,11 +14,9 @@ persistence:
     selector:
     # matchLabels:
     #   some: label
-  downloads:
-    volumeClaimName: nzbget-downloads
-  plex:
-    volumeClaimName: plex-data
-    subPath: Series
+  volumeClaimNamePlex: plex-data
+  subPathDownloads: addons/nzbget/
+  subPathPlex: Series/
 
 image:
   repository: docker.io/linuxserver/sonarr
