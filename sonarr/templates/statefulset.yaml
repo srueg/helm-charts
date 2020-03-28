@@ -33,9 +33,9 @@ spec:
           volumeMounts:
             - mountPath: /config/
               name: config
-            - mountPath: /downloads/
+            - mountPath: /addons/
               name: plex
-              subPath: {{ .Values.persistence.subPathDownloads }}
+              subPath: {{ .Values.persistence.subPathAddons }}
             - mountPath: /tv/
               name: plex
               subPath: {{ .Values.persistence.subPathPlex }}

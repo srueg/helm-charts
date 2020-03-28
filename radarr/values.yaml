@@ -15,7 +15,7 @@ persistence:
     # matchLabels:
     #   some: label
   volumeClaimNamePlex: plex-data
-  subPathDownloads: addons/nzbget/
+  subPathAddons: addons/
   subPathPlex: Movies/
 
 image:
