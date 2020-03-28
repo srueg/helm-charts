@@ -24,9 +24,9 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-            - name: PGID
-              value: "{{ .Values.uid }}"
             - name: PUID
+              value: "{{ .Values.uid }}"
+            - name: PGID
               value: "{{ .Values.gid }}"
             - name: TZ
               value: "{{ .Values.timeZone }}"
