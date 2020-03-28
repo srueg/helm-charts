@@ -1,0 +1,31 @@
+{{- if .Values.ingress.enabled -}}
+{{- $fullName := include "transmission.fullname" . -}}
+{{- $hostName := .Values.ingress.host -}}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}
+  labels:
+    app.kubernetes.io/name: {{ include "transmission.name" . }}
+    helm.sh/chart: {{ include "transmission.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- with .Values.ingress.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+spec:
+{{- if .Values.ingress.tls }}
+  tls:
+    - hosts:
+        - {{ $hostName | quote }}
+{{- end }}
+  rules:
+    - host: {{ $hostName | quote }}
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: {{ $fullName }}
+              servicePort: http
+{{- end }}

@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "transmission.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "transmission.name" . }}
+    helm.sh/chart: {{ include "transmission.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "transmission.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "transmission.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: PUID
+              value: "{{ .Values.uid }}"
+            - name: PGID
+              value: "{{ .Values.gid }}"
+            - name: TZ
+              value: "{{ .Values.timeZone }}"
+            - name: TRANSMISSION_WEB_HOME
+              value: "/combustion-release/"
+            - name: USER
+              value: "{{ .Values.username }}"
+            - name: PASS
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ .Values.passwordSecretName }}"
+                  key: password
+          volumeMounts:
+            - mountPath: /config/
+              name: config
+              subPath: config/
+            - mountPath: /watch/
+              name: config
+              subPath: watch/
+            - mountPath: /downloads/
+              name: plex
+              subPath: {{ .Values.persistence.subPathPlex }}
+          ports:
+            - name: http
+              containerPort: 9091
+          # livenessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          #   initialDelaySeconds: 60
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+      terminationGracePeriodSeconds: 60
+      volumes:
+{{- if .Values.persistence.enabled }}
+        - name: plex
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.volumeClaimNamePlex }}
+        - name: config
+          persistentVolumeClaim:
+            claimName: {{ include "transmission.fullname" . }}-config
+{{- else }}
+        - name: plex
+          emptyDir: {}
+        - name: config
+          emptyDir: {}
+{{- end }}
