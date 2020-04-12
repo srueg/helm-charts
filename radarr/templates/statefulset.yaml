@@ -21,11 +21,12 @@ spec:
     spec:
       containers:
         - name: gatekeeper
-          image: quay.io/keycloak/keycloak-gatekeeper:9.0.2
+          image: "{{ .Values.gatekeeper.repository }}:{{ .Values.gatekeeper.tag }}"
+          imagePullPolicy: {{ .Values.gatekeeper.pullPolicy }}
           args:
           - --listen=:3000
-          - --discovery-url=https://sso.srueg.ch/auth/realms/lab
-          - --client-id=radarr
+          - --discovery-url={{ .Values.gatekeeper.discoveryUrl }}
+          - --client-id={{ .Values.gatekeeper.clientId }}
           - --upstream-url=http://localhost:7878
           - --resources
           - "uri=/*|roles=radarr"
@@ -37,12 +38,12 @@ spec:
           - name: PROXY_CLIENT_SECRET
             valueFrom:
               secretKeyRef:
-                name: radarr-gatekeeper
+                name: {{ .Values.gatekeeper.existingSecret }}
                 key: client-secret
           - name: PROXY_ENCRYPTION_KEY
             valueFrom:
               secretKeyRef:
-                name: radarr-gatekeeper
+                name: {{ .Values.gatekeeper.existingSecret }}
                 key: encryption-key
           ports:
           - name: http
