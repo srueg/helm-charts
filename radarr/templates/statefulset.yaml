@@ -20,6 +20,42 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       containers:
+        - name: gatekeeper
+          image: quay.io/keycloak/keycloak-gatekeeper:9.0.2
+          args:
+          - --listen=:3000
+          - --discovery-url=https://sso.srueg.ch/auth/realms/lab
+          - --client-id=radarr
+          - --upstream-url=http://localhost:7878
+          - --resources
+          - "uri=/*|roles=radarr"
+          - --enable-encrypted-token
+          - --force-encrypted-cookie
+          - --enable-logging
+          - --enable-refresh-tokens
+          env:
+          - name: PROXY_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: radarr-gatekeeper
+                key: client-secret
+          - name: PROXY_ENCRYPTION_KEY
+            valueFrom:
+              secretKeyRef:
+                name: radarr-gatekeeper
+                key: encryption-key
+          ports:
+          - name: http
+            containerPort: 3000
+          livenessProbe:
+            httpGet:
+              path: /oauth/health
+              port: http
+            initialDelaySeconds: 60
+          readinessProbe:
+            httpGet:
+              path: /oauth/health
+              port: http
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -40,17 +76,17 @@ spec:
               name: plex
               subPath: {{ .Values.persistence.subPathPlex }}
           ports:
-            - name: http
+            - name: radarr
               containerPort: 7878
           livenessProbe:
             httpGet:
               path: /login
-              port: http
+              port: radarr
             initialDelaySeconds: 60
           readinessProbe:
             httpGet:
               path: /login
-              port: http
+              port: radarr
           resources:
 {{ toYaml .Values.resources | indent 12 }}
     {{- with .Values.nodeSelector }}
