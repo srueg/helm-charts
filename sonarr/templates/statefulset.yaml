@@ -84,12 +84,12 @@ spec:
           livenessProbe:
             httpGet:
               path: /login
-              port: http
+              port: sonarr
             initialDelaySeconds: 60
           readinessProbe:
             httpGet:
               path: /login
-              port: http
+              port: sonarr
           resources:
 {{ toYaml .Values.resources | indent 12 }}
     {{- with .Values.nodeSelector }}
