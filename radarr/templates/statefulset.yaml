@@ -29,7 +29,7 @@ spec:
           - --client-id={{ .Values.gatekeeper.clientId }}
           - --upstream-url=http://localhost:7878
           - --resources
-          - uri=/*
+          - "uri=/*|roles=radarr:login"
           - --resources
           - uri=/api/*|white-listed=true
           - --enable-encrypted-token
