@@ -20,6 +20,45 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       containers:
+        - name: gatekeeper
+          image: "{{ .Values.gatekeeper.repository }}:{{ .Values.gatekeeper.tag }}"
+          imagePullPolicy: {{ .Values.gatekeeper.pullPolicy }}
+          args:
+          - --listen=:3000
+          - --discovery-url={{ .Values.gatekeeper.discoveryUrl }}
+          - --client-id={{ .Values.gatekeeper.clientId }}
+          - --upstream-url=http://localhost:8989
+          - --resources
+          - "uri=/*|roles={{ .Chart.Name }}:login"
+          - --resources
+          - uri=/api/*|white-listed=true
+          - --enable-encrypted-token
+          - --force-encrypted-cookie
+          - --enable-logging
+          - --enable-refresh-tokens
+          env:
+          - name: PROXY_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.gatekeeper.existingSecret }}
+                key: client-secret
+          - name: PROXY_ENCRYPTION_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.gatekeeper.existingSecret }}
+                key: encryption-key
+          ports:
+          - name: http
+            containerPort: 3000
+          livenessProbe:
+            httpGet:
+              path: /oauth/health
+              port: http
+            initialDelaySeconds: 60
+          readinessProbe:
+            httpGet:
+              path: /oauth/health
+              port: http
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -40,7 +79,7 @@ spec:
               name: plex
               subPath: {{ .Values.persistence.subPathPlex }}
           ports:
-            - name: http
+            - name: sonarr
               containerPort: 8989
           livenessProbe:
             httpGet:

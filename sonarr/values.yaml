@@ -23,6 +23,15 @@ image:
   tag: 2.0.0.5322-ls15
   pullPolicy: IfNotPresent
 
+gatekeeper:
+  repository: quay.io/keycloak/keycloak-gatekeeper
+  tag: 9.0.2
+  pullPolicy: IfNotPresent
+
+  discoveryUrl: https://sso.srueg.ch/auth/realms/lab
+  clientId: sonarr
+  existingSecret: sonarr-gatekeeper
+
 nameOverride: ""
 fullnameOverride: ""
 
